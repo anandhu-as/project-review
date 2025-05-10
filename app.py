@@ -1,29 +1,28 @@
-from flask import Flask, request  # constructor
+from flask import Flask, request 
+import pickle
+import numpy as np
 
 app = Flask(__name__)
 
-@app.route("/") #default - GET method
-def home(): 
-    return "Hello from Flask!"
+model = pickle.load(open('titanic.pkl','rb'))
 
-@app.route("/contact")
-def contact():
-    return "Contact me on example@gmail.com"
+@app.route('/')
+def home():
+    return 'Titanic Survival Prediction API'
 
-@app.route('/login',methods=['GET','POST'])
-def login():
-    if request.method == 'GET':
-        return "You are in GET method"
-    else:
-        data = request.get_json()
-        if not data:
-            return f"Data not entered"
+@app.route('/predict',methods=['POST'])
+def predict():
+    data = request.get_json(force=True)
 
-        name = data.get('name')
-        age = data.get('age')
-        return f"Username: {name}, Age: {age}"
+    features = [
+        data['Pclass'],
+        data['Sex'],
+        data['Age']
+    ]
 
+    prediction = model.predict(([np.array(features)]))
 
-if __name__ == "__main__":
-#use conditional operators
+    return f"Survival Prediction: {int(prediction[0])}"
+
+if __name__ == '__main__':
     app.run(debug=True)
