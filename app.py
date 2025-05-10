@@ -25,5 +25,5 @@ def login():
 
 
 if __name__ == "__main__":
-#use conditional operators
+#use conditional operatorss
     app.run(debug=True)
